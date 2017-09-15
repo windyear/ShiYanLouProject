@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1495447062 source:d:\windyear_files\shiyanloucode\shiyanlouproject\simplecalculator\main.c
+	<stdio.h>
+	<stdlib.h>
+

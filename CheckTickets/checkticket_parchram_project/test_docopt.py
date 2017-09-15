@@ -89,8 +89,7 @@ def cli():
           '}&leftTicketDTO.to_station={}&purpose_codes=ADULT'.format(
         date, from_station, to_station
     )
-    # test_url = 'https://kyfw.12306.cn/otn/leftTicket/queryX?leftTicketDTO.train_date=2017-09-14&leftTicketDTO' \
-    #            '.from_station=BJP&leftTicketDTO.to_station=GZQ&purpose_codes=ADULT '
+    # test_url = 'https://kyfw.12306.cn/otn/leftTicket/queryX?leftTicketDTO.train_date=2017-09-14&leftTicketDTO.from_station=BJP&leftTicketDTO.to_station=GZQ&purpose_codes=ADULT '
     # 添加一个请求头,猜测12306网站添加了识别浏览器的功能，直接使用url去请求会返回网络错误的html代码,调试了几天一直以为是编码的问题。
     # 解决方法是直接复制整个浏览器的请求头。
     headers = {
