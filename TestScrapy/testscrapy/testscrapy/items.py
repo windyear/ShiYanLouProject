@@ -14,4 +14,6 @@ class TestscrapyItem(scrapy.Item):
     title = scrapy.Field()
     link = scrapy.Field()
     desc = scrapy.Field()
+    image_urls = scrapy.Field()
+    images = scrapy.Field()
     pass
