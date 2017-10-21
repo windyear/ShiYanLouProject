@@ -3,7 +3,7 @@ project(HttpServer)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp server_base.h server_base.cpp)
+set(SOURCE_FILES main.cpp server_base.h)
 add_executable(HttpServer ${SOURCE_FILES})
 # 使用BOOST库
 find_package(Boost)
