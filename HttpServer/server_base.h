@@ -16,7 +16,7 @@ namespace WindyearWeb{
     struct Request{
         //请求的信息如路径,方法等
         std::string path, method, http_version;
-        //只能指正指向请求内容
+        //智能指针指向请求内容
         std::shared_ptr<std::istream> content;
         //哈希容器,存储 key-value 对
         std::unordered_map<std::string, std::string> header;
@@ -105,7 +105,14 @@ namespace WindyearWeb{
                         //这次使用 async_read 函数,读取到一定字节
                         boost::asio::async_read(*socket, *read_buffer,
                         boost::asio::transfer_exactly(std::stoll(request->header["Content-Length"]) - num_additional_bytes),
-                        )
+                        [this, socket, read_buffer, request](const boost::system::error_code& ec, size_t bytes_transferred){
+                            if(!ec){
+                                request->content = std::shared_ptr<std::istream>(new std::istream(read_buffer.get()));
+                                respond(socket, request);
+                            }
+                        });
+                    }else{
+                        respond(socket, request);
                     }
                 }
             });
@@ -143,10 +150,39 @@ namespace WindyearWeb{
             return request;
         }
 
+        //用于服务器 respond 的函数
+        void respond(std::shared_ptr<socket_type> socket, std::shared_ptr<Request> request) const{
+            //对请求与方法进行匹配,生成响应
+            for(auto res_it: all_resources){
+                std::regex e(res_it->first);
+                std::smatch sm_res;
+                if(std::regex_match(request->path, sm_res, e)){
+                    if(res_it->second.count(request->method) > 0) {
+                        request->path_match = move(sm_res);
+                        auto write_buffer = std::make_shared<boost::asio::streambuf>();
+                        //存储响应内容的输出流对象
+                        std::ostream response(write_buffer.get());
+                        //调用 resource_type 的一个函数, 传入请求和响应
+                        res_it->second[request->method](response, *request);
+
+                        //写响应函数
+                        boost::asio::async_write(*socket, *write_buffer,
+                                                 [this, socket, request, write_buffer](
+                                                         const boost::system::error_code &ec,
+                                                         size_t bytes_transferred) {
+                                                     if (!ec && stof(request->http_version) > 1.05)
+                                                         process_request_and_respond(socket);
+
+                                                 });
+                        return;
+                    }
+                }
+            }
+        }
         };
     //一个继承服务器基类的服务器类
     template <typename socket_type>
-    class Server: public ServerBase<socket_type>{};
+    class ServerHttp: public ServerBase<socket_type>{};
 
 }
 #endif //HTTPSERVER_SERVER_BASE_H
