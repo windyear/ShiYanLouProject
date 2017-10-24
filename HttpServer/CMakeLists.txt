@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
-project(HttpServer)
+project(HttpServer C CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp server_base.h server_http.h handler.h)
+set(SOURCE_FILES main.cpp server_base.h server_http.h handler.h server_https.h)
 add_executable(HttpServer ${SOURCE_FILES})
 # 使用BOOST库
 find_package(Boost)
@@ -15,3 +15,6 @@ set (Boost_USE_MULTITHREAD ON)  # enable multithreading
 find_package (Boost COMPONENTS REQUIRED  chrono filesystem system)
 # 声明链接到BOOST库
 target_link_libraries (HttpServer ${Boost_LIBRARIES})
+
+find_package (Threads)
+target_link_libraries (HttpServer ${CMAKE_THREAD_LIBS_INIT})

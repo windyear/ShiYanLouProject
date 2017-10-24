@@ -82,8 +82,8 @@ namespace WindyearWeb{
         size_t num_threads;
         //vector存储多个线程
         std::vector<std::thread> threads;
-
-        virtual void accept();
+        //刚开始的时候声明虚函数忘记加大括号,导致该声明无效,子类实现的是自己的 accept 函数
+        virtual void accept(){};
         //具体的处理请求和响应的函数, 参数是不同的 socket 类型的 socket 指针
         //函数后面的 const 表明该成员函数不能修改 no static 变量
         void process_request_and_respond(std::shared_ptr<socket_type> socket) const {
