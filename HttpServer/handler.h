@@ -45,20 +45,32 @@ void start_server(SERVER_TYPE& server){
     };
     //默认处理请求,应答 web 目录下面的文件,默认文件是 index.html
     server.default_resource["^/?(.*)$"]["GET"] = [](ostream& response, Request& request){
-        string filename = "web/";
+        string filename = "www/";
 
         string path = request.path_match[1];
-        // 防止使用 '..' 来访问 web/ 目录外的内容,删除 '.'
+                //将路径中的问号除去
+//        std::regex e_path("(.+)\\?{0,1}.*");
+//        std::smatch path_match;
+//        std::cout << path << std::endl;
+//
+//        if(std::regex_match(path, path_match, e_path)){
+//            path = path_match[1];
+//            std::cout << path_match[0] << std::endl;
+//        }
+//        std::cout << path << std::endl;
+        // 防止使用 '..' 来访问 www/ 目录外的内容,删除 '.'
         //最后的一个 '.' 的位置
-        size_t last_pos = path.rfind(".");
-        size_t current_pos = 0;
-        size_t pos;
-        while((pos = path.find('.', current_pos)) != string::npos && pos != last_pos){
-            current_pos = pos;
-            path.erase(pos, 1);
-            last_pos--;
-        }
-
+        //下面这部分代码有问题,删除.会导致文件名中带有 . 的请求访问文件失败
+//        size_t last_pos = path.rfind(".");
+//        size_t current_pos = 0;
+//        size_t pos;
+//        while((pos = path.find('.', current_pos)) != string::npos && pos != last_pos){
+//            current_pos = pos;
+//            path.erase(pos, 1);
+//            last_pos--;
+//        }
+        if(path.find('?')){
+            path = path.substr(0, path.find('?'));}
         filename += path;
         //文件流,用来读取文件到文件输入流
         ifstream ifs;
@@ -69,7 +81,7 @@ void start_server(SERVER_TYPE& server){
             }
             filename += "index.html";
         }
-
+        std::cout << filename << std::endl;
         ifs.open(filename, ifstream::in);
         //获取长度
         if(ifs){

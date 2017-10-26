@@ -18,3 +18,6 @@ target_link_libraries (HttpServer ${Boost_LIBRARIES})
 
 find_package (Threads)
 target_link_libraries (HttpServer ${CMAKE_THREAD_LIBS_INIT})
+
+find_package(OpenSSL REQUIRED)
+target_link_libraries(HttpServer OpenSSL::SSL)

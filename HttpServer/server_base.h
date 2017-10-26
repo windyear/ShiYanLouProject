@@ -134,7 +134,6 @@ namespace WindyearWeb{
                 request.method = sub_match[1];
                 request.path = sub_match[2];
                 request.http_version = sub_match[3];
-
                 //解析头部其他信息
                 bool matched;
                 e = "^([^:]*): ?(.*)$";
